@@ -28,7 +28,6 @@ public class ImageServiceImpl implements ImageService {
 
         if(employee.isPresent()){
             try {
-
                 Image image = new Image();
                 image.setEmployeeId(employeeId);
                 image.setImageFileData(imageFile.getBytes());
