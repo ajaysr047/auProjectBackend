@@ -1,9 +1,9 @@
 package com.au.main.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.au.main.request.ImageWrapper;
 
 public interface ImageService {
 
-    boolean saveToDB(Integer employeeId, MultipartFile image);
+    boolean saveToDB(Integer employeeId, ImageWrapper imageWrapper);
 
 }

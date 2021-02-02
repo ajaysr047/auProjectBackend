@@ -1,6 +1,7 @@
 package com.au.main.controller;
 
 import com.au.main.entity.Employee;
+import com.au.main.request.ImageWrapper;
 import com.au.main.response.EditedImage;
 import com.au.main.service.EmployeeService;
 import com.au.main.service.ImageService;
@@ -21,9 +22,9 @@ public class ImageController {
     EmployeeService employeeService;
 
     @PostMapping(value = "/editImage/{employeeId}")
-    public ResponseEntity<Object> editImage(@RequestParam("image") MultipartFile image, @PathVariable("employeeId") Integer employeeId){
+    public ResponseEntity<Object> editImage(@RequestBody ImageWrapper imageWrapper, @PathVariable("employeeId") Integer employeeId){
 
-        boolean isSaved = imageService.saveToDB(employeeId, image);
+        boolean isSaved = imageService.saveToDB(employeeId, imageWrapper);
         EditedImage editedImage = new EditedImage();
         if(isSaved){
             Employee employee = employeeService.getEditedImage(employeeId);

@@ -4,12 +4,10 @@ import com.au.main.entity.Employee;
 import com.au.main.entity.Image;
 import com.au.main.repository.EmployeeRepository;
 import com.au.main.repository.ImageRepository;
+import com.au.main.request.ImageWrapper;
 import com.au.main.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -22,23 +20,20 @@ public class ImageServiceImpl implements ImageService {
     ImageRepository imageRepository;
 
     @Override
-    public boolean saveToDB(Integer employeeId, MultipartFile imageFile) {
+    public boolean saveToDB(Integer employeeId, ImageWrapper imageWrapper) {
 
         Optional<Employee> employee = employeeRepository.findById(employeeId);
 
         if(employee.isPresent()){
-            try {
-                Image image = new Image();
-                image.setEmployeeId(employeeId);
-                image.setImageFileData(imageFile.getBytes());
-                image.setImageFileName(imageFile.getOriginalFilename());
-                image.setImageFileType(imageFile.getContentType());
+            Image image = new Image();
+            image.setEmployeeId(employeeId);
+            image.setImageFileData(imageWrapper.getImageFileData());
+            image.setImageFileName(imageWrapper.getImageFileName());
+            image.setImageFileType(imageWrapper.getImageFileType());
 
-                imageRepository.save(image);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            imageRepository.save(image);
             return true;
+
         }
         return false;
     }
