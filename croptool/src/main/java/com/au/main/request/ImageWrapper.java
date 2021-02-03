@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 public class ImageWrapper {
 
+    private Integer employeeId;
+
     private String imageFileName;
 
     private String imageFileType;

@@ -1,6 +1,5 @@
 package com.au.main.service.implementation;
 
-import com.au.main.repository.ImageRepository;
 import com.au.main.request.Credentials;
 import com.au.main.entity.Employee;
 import com.au.main.repository.EmployeeRepository;
@@ -9,17 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     EmployeeRepository employeeRepository;
-
-    @Autowired
-    ImageRepository imageRepository;
 
     @Override
     public Employee addEmployee(Employee employee) {
@@ -46,6 +43,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee.orElse(null);
     }
 
+    @Override
+    public Set<Employee> getSubordinated(Integer managerId) {
+        Optional<Employee> manager = employeeRepository.findByRoleAndEmployeeId("manager", managerId);
+        if(manager.isPresent())
+            return manager.map(Employee::getSubordinateEmployees).orElse(null);
+        return new HashSet<>();
+    }
 
     private String encryptPassword(String plainPassword) {
         return new BCryptPasswordEncoder().encode(plainPassword);

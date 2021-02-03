@@ -2,6 +2,7 @@ package com.au.main.controller;
 
 import com.au.main.entity.Employee;
 import com.au.main.request.ImageWrapper;
+import com.au.main.response.BulkImageResponse;
 import com.au.main.response.EditedImage;
 import com.au.main.service.EmployeeService;
 import com.au.main.service.ImageService;
@@ -9,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/image")
@@ -21,22 +23,20 @@ public class ImageController {
     @Autowired
     EmployeeService employeeService;
 
-    @PostMapping(value = "/editImage/{employeeId}")
-    public ResponseEntity<Object> editImage(@RequestBody ImageWrapper imageWrapper, @PathVariable("employeeId") Integer employeeId){
+    @PostMapping(value = "/editImage")
+    public ResponseEntity<Object> editImage(@RequestBody ImageWrapper imageWrapper){
 
-        boolean isSaved = imageService.saveToDB(employeeId, imageWrapper);
+        boolean isSaved = imageService.saveToDB(imageWrapper);
         EditedImage editedImage = new EditedImage();
         if(isSaved){
-            Employee employee = employeeService.getEditedImage(employeeId);
+            Employee employee = employeeService.getEditedImage(imageWrapper.getEmployeeId());
 
 
             if(employee != null){
-                editedImage.setEmployeeId(employeeId);
+                editedImage.setEmployeeId(imageWrapper.getEmployeeId());
                 editedImage.setImageFileData(employee.getEditedImage());
                 editedImage.setIsEdited(Boolean.TRUE);
                 editedImage.setMessage("Received image saved!");
-                //            To be added
-                //            editedImage.setDownloadURI();
                 return new ResponseEntity<>(editedImage, HttpStatus.OK);
             }
             else{
@@ -48,5 +48,12 @@ public class ImageController {
         editedImage.setIsEdited(Boolean.FALSE);
         editedImage.setMessage("Couldn't edit image");
         return new ResponseEntity<>(editedImage, HttpStatus.EXPECTATION_FAILED);
+    }
+
+    @PostMapping("/bulkEdit")
+    public ResponseEntity<BulkImageResponse> bulkEdit(@RequestBody Set<ImageWrapper> bulkImages){
+
+        BulkImageResponse response = imageService.bulkEditSave(bulkImages);
+        return ResponseEntity.ok(response);
     }
 }

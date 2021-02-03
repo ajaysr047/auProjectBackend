@@ -1,5 +1,6 @@
 package com.au.main.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,7 @@ public class Employee {
     @Column
     private String password;
 
-    @Column(length = 1000)
+    @Column(length = 3000)
     private  byte[] editedImage;
 
     @OneToMany(mappedBy = "employeeId", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
@@ -38,6 +39,7 @@ public class Employee {
     private Employee manager;
 
     @OneToMany(mappedBy = "manager")
+    @JsonIgnore
     private  Set<Employee> subordinateEmployees = new HashSet<>();
 
     @Column
