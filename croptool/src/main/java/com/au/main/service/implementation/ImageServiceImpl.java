@@ -1,5 +1,6 @@
 package com.au.main.service.implementation;
 
+import com.au.main.constants.Constants;
 import com.au.main.entity.Employee;
 import com.au.main.entity.Image;
 import com.au.main.repository.EmployeeRepository;
@@ -9,15 +10,13 @@ import com.au.main.response.BulkImageResponse;
 import com.au.main.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class ImageServiceImpl implements ImageService {
 
-    private static final String DUMMY_IMAGE_TYPE = "image/jpeg";
+
 
     @Autowired
     EmployeeRepository employeeRepository;
@@ -56,18 +55,18 @@ public class ImageServiceImpl implements ImageService {
                 responseEditedImage.setEmployeeId(imageWrapper.getEmployeeId());
                 responseEditedImage.setImageFileData(employee.get().getEditedImage());
                 responseEditedImage.setImageFileName(employee.get().getEmployeeName());
-                responseEditedImage.setImageFileType(DUMMY_IMAGE_TYPE);
+                responseEditedImage.setImageFileType(Constants.DUMMY_IMAGE_TYPE);
 
                 response.getResponseEditedImages().add(responseEditedImage);
             }
             else{
                 response.setIsSuccess(Boolean.FALSE);
-                response.setMessage("Process couldn't be completed!");
+                response.setMessage(Constants.BULK_IMAGE_FAILURE_MESSAGE);
                 return response;
             }
         }
         response.setIsSuccess(Boolean.TRUE);
-        response.setMessage("Process successfully completed!");
+        response.setMessage(Constants.BULK_IMAGE_SUCCESS_MESSAGE);
         return response;
     }
 }

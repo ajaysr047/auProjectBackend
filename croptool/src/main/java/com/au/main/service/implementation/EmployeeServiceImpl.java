@@ -1,15 +1,22 @@
 package com.au.main.service.implementation;
 
+import com.au.main.constants.Constants;
 import com.au.main.request.Credentials;
 import com.au.main.entity.Employee;
 import com.au.main.repository.EmployeeRepository;
+import com.au.main.request.EmployeeSignUp;
 import com.au.main.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 @Service
@@ -19,13 +26,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     EmployeeRepository employeeRepository;
 
     @Override
-    public Employee addEmployee(Employee employee) {
-       if(employeeRepository.findByEmail(employee.getEmail()).isEmpty()){
-           String plainPassword = employee.getPassword();
-           employee.setPassword(encryptPassword(plainPassword));
+    public Employee addEmployee(EmployeeSignUp employeeSignUp) {
+        try {
+            Random random = SecureRandom.getInstanceStrong();
+            int randomIndex = random.nextInt(Constants.BOUND_FOR_DUMMY_IMAGES) + Constants.BOUND_OFFSET;
+            InputStream inputStream = new ClassPathResource(Constants.EDITED_IMAGE_FOLDER + Constants.getEditedImageFileNames()[randomIndex]).getInputStream();
 
-           return employeeRepository.save(employee);
-       }
+            Employee persistentEmployee = new Employee(employeeSignUp.getEmployeeName(), employeeSignUp.getEmail(), employeeSignUp.getPassword(), employeeSignUp.getRole().toLowerCase(), inputStream.readAllBytes());
+
+            if(employeeRepository.findByEmail(persistentEmployee.getEmail()).isEmpty()){
+                String plainPassword = persistentEmployee.getPassword();
+                persistentEmployee.setPassword(encryptPassword(plainPassword));
+
+                return employeeRepository.save(persistentEmployee);
+            }
+        } catch (IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
        return null;
     }
 
@@ -44,8 +62,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Set<Employee> getSubordinated(Integer managerId) {
-        Optional<Employee> manager = employeeRepository.findByRoleAndEmployeeId("manager", managerId);
+    public Set<Employee> getSubordinates(Integer managerId) {
+        Optional<Employee> manager = employeeRepository.findByRoleAndEmployeeId(Constants.MANAGER_ROLE, managerId);
         if(manager.isPresent())
             return manager.map(Employee::getSubordinateEmployees).orElse(null);
         return new HashSet<>();

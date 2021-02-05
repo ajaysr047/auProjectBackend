@@ -1,5 +1,6 @@
 package com.au.main.controller;
 
+import com.au.main.constants.Constants;
 import com.au.main.entity.Employee;
 import com.au.main.request.ImageWrapper;
 import com.au.main.response.BulkImageResponse;
@@ -36,17 +37,17 @@ public class ImageController {
                 editedImage.setEmployeeId(imageWrapper.getEmployeeId());
                 editedImage.setImageFileData(employee.getEditedImage());
                 editedImage.setIsEdited(Boolean.TRUE);
-                editedImage.setMessage("Received image saved!");
+                editedImage.setMessage(Constants.IMAGE_SAVED_MESSAGE);
                 return new ResponseEntity<>(editedImage, HttpStatus.OK);
             }
             else{
                 editedImage.setIsEdited(Boolean.FALSE);
-                editedImage.setMessage("User invalid!");
+                editedImage.setMessage(Constants.INVALID_USER_MESSAGE);
                 return new ResponseEntity<>(editedImage, HttpStatus.NOT_FOUND);
             }
         }
         editedImage.setIsEdited(Boolean.FALSE);
-        editedImage.setMessage("Couldn't edit image");
+        editedImage.setMessage(Constants.IMAGE_EDIT_FAILED_MESSAGE);
         return new ResponseEntity<>(editedImage, HttpStatus.EXPECTATION_FAILED);
     }
 

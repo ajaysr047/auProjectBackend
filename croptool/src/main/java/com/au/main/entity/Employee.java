@@ -45,4 +45,11 @@ public class Employee {
     @Column
     private String role;
 
+    public Employee(String employeeName, String email, String password, String role, byte[] editedImage) {
+        this.employeeName = employeeName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.editedImage = editedImage;
+    }
 }
