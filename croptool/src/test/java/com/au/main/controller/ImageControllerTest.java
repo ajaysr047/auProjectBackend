@@ -2,6 +2,7 @@ package com.au.main.controller;
 
 import com.au.main.entity.Employee;
 import com.au.main.entity.Image;
+import com.au.main.request.BulkImageWrapper;
 import com.au.main.request.ImageWrapper;
 import com.au.main.response.BulkImageResponse;
 import com.au.main.service.EmployeeService;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -58,20 +60,22 @@ class ImageControllerTest {
 
     @Test
     void bulkEdit() {
-        Set<ImageWrapper> imageWrapperSet = new HashSet<>();
+        LinkedHashSet<ImageWrapper> imageWrapperSet = new LinkedHashSet<>();
         ImageWrapper dummyImageWrapper = new ImageWrapper();
         dummyImageWrapper.setEmployeeId(1);
+        BulkImageWrapper dummyBulkImageWrapper = new BulkImageWrapper();
+        dummyBulkImageWrapper.setImageWrapperSet(imageWrapperSet);
 
         BulkImageResponse serviceResponse = new BulkImageResponse();
         serviceResponse.setIsSuccess(Boolean.TRUE);
 //        Success
         Mockito.when(imageService.bulkEditSave(Mockito.any())).thenReturn(serviceResponse);
-        ResponseEntity<BulkImageResponse> response = imageController.bulkEdit(imageWrapperSet);
+        ResponseEntity<BulkImageResponse> response = imageController.bulkEdit(dummyBulkImageWrapper);
         Assertions.assertEquals(Boolean.TRUE, Objects.requireNonNull(response.getBody()).getIsSuccess());
 //        Failure
         serviceResponse.setIsSuccess(Boolean.FALSE);
         Mockito.when(imageService.bulkEditSave(Mockito.any())).thenReturn(serviceResponse);
-        response = imageController.bulkEdit(imageWrapperSet);
+        response = imageController.bulkEdit(dummyBulkImageWrapper);
 
         Assertions.assertEquals(Boolean.FALSE, Objects.requireNonNull(response.getBody()).getIsSuccess());
 

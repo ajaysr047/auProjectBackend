@@ -3,8 +3,7 @@ package com.au.main.response;
 import com.au.main.request.ImageWrapper;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -12,7 +11,7 @@ import java.util.Set;
 public class BulkImageResponse {
     private Boolean isSuccess;
 
-    private Set<ImageWrapper> responseEditedImages = new HashSet<>();
+    private Set<ImageWrapper> responseEditedImages = new LinkedHashSet<>();
 
     private String message;
 }

@@ -28,7 +28,7 @@ public class Employee {
     @Column
     private String password;
 
-    @Column(length = 3000)
+    @Column(length = 100000)
     private  byte[] editedImage;
 
     @OneToMany(mappedBy = "employeeId", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)

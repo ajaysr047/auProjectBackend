@@ -22,7 +22,7 @@ public class Image {
     @Column
     private String imageFileType;
 
-    @Column(length = 3000)
+    @Column(length = 100000)
     private byte[] imageFileData;
 
     @Column

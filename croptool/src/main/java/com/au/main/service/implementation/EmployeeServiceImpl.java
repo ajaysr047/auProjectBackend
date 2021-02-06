@@ -6,6 +6,8 @@ import com.au.main.entity.Employee;
 import com.au.main.repository.EmployeeRepository;
 import com.au.main.request.EmployeeSignUp;
 import com.au.main.service.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +24,9 @@ import java.util.Set;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
+    private Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+
+
     @Autowired
     EmployeeRepository employeeRepository;
 
@@ -37,11 +42,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             if(employeeRepository.findByEmail(persistentEmployee.getEmail()).isEmpty()){
                 String plainPassword = persistentEmployee.getPassword();
                 persistentEmployee.setPassword(encryptPassword(plainPassword));
-
+                logger.info("Employee signup success!");
                 return employeeRepository.save(persistentEmployee);
             }
         } catch (IOException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error(String.format("Employee signup failed with error: %s" , e.toString()));
         }
 
        return null;
@@ -50,8 +55,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee login(Credentials credentials) {
         Optional<Employee> employee = employeeRepository.findByEmail(credentials.getEmail());
-        if(employee.isPresent() && isPasswordValid(credentials.getPassword(), employee.get().getPassword()))
-                return employee.get();
+        if(employee.isPresent() && isPasswordValid(credentials.getPassword(), employee.get().getPassword())){
+            logger.info("Logged in successfully");
+            return employee.get();
+        }
+        logger.warn("Login failed!");
         return null;
     }
 

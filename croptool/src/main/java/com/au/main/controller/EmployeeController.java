@@ -9,10 +9,13 @@ import com.au.main.response.LoginResponse;
 import com.au.main.response.SignupResponse;
 import com.au.main.response.SubordinatesResponse;
 import com.au.main.service.EmployeeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Set;
@@ -21,13 +24,13 @@ import java.util.Set;
 @RequestMapping("/api/employee")
 public class EmployeeController {
 
-
+    private Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Autowired
     EmployeeService employeeService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> employeeSignup(@RequestBody EmployeeSignUp employeeSignUp) throws IOException, NoSuchAlgorithmException{
+    public ResponseEntity<SignupResponse> employeeSignup(@Valid @RequestBody EmployeeSignUp employeeSignUp) throws IOException, NoSuchAlgorithmException{
 
         Employee response = employeeService.addEmployee(employeeSignUp);
         if(response != null)
@@ -37,7 +40,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> employeeLogin(@RequestBody Credentials credentials){
+    public ResponseEntity<LoginResponse> employeeLogin(@Valid @RequestBody Credentials credentials){
         Employee employee = employeeService.login(credentials);
 
         if(employee != null)
@@ -56,12 +59,13 @@ public class EmployeeController {
             subordinates.setMessage(Constants.SUBORDINATE_SUCCESS_MESSAGE);
 
             responseList.forEach(employee -> subordinates.getSubordinateList().add(employee));
+            logger.info("Subordinates found!");
             return ResponseEntity.ok(subordinates);
         }
 
         subordinates.setIsSuccess(Boolean.FALSE);
         subordinates.setMessage(Constants.SUBORDINATE_FAILURE_MESSAGE);
-
+        logger.warn("Subordinates not found!");
         return new ResponseEntity<>(subordinates, HttpStatus.NOT_FOUND);
     }
 
