@@ -35,7 +35,6 @@ public class EmployeeController {
         Employee response = employeeService.addEmployee(employeeSignUp);
         if(response != null)
             return new ResponseEntity<>(new SignupResponse(response.getEmployeeId(), Boolean.TRUE, Constants.SIGNUP_SUCCESS_MESSAGE), HttpStatus.CREATED);
-
         return new ResponseEntity<>(new SignupResponse(Constants.FAILURE_EMPLOYEE_ID, Boolean.FALSE, Constants.SIGNUP_EMAIL_DUPLICATE_MESSAGE), HttpStatus.CONFLICT);
     }
 
