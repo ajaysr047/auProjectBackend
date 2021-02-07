@@ -8,13 +8,13 @@ import com.au.main.request.EmployeeSignUp;
 import com.au.main.request.ImageWrapper;
 import com.au.main.response.EditedImage;
 import com.au.main.response.LoginResponse;
+import com.au.main.response.SignupResponse;
 import com.au.main.response.SubordinatesResponse;
 import com.au.main.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -34,12 +34,21 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     EmployeeRepository employeeRepository;
 
+    public Random getRandom() throws NoSuchAlgorithmException {
+        return SecureRandom.getInstanceStrong();
+    }
+
+    public InputStream getInputStream(int randomIndex) throws IOException {
+        return new ClassPathResource(Constants.EDITED_IMAGE_FOLDER + Constants.getEditedImageFileNames()[randomIndex]).getInputStream();
+    }
+
     @Override
-    public Employee addEmployee(EmployeeSignUp employeeSignUp) {
+    public SignupResponse addEmployee(EmployeeSignUp employeeSignUp){
+        SignupResponse signupResponse = new SignupResponse();
         try {
-            Random random = SecureRandom.getInstanceStrong();
+            Random random = getRandom();
             int randomIndex = random.nextInt(Constants.BOUND_FOR_DUMMY_IMAGES) + Constants.BOUND_OFFSET;
-            InputStream inputStream = new ClassPathResource(Constants.EDITED_IMAGE_FOLDER + Constants.getEditedImageFileNames()[randomIndex]).getInputStream();
+            InputStream inputStream = getInputStream(randomIndex);
 
             Employee persistentEmployee = new Employee(employeeSignUp.getEmployeeName(), employeeSignUp.getEmail(), employeeSignUp.getPassword(), employeeSignUp.getRole().toLowerCase(), inputStream.readAllBytes());
 
@@ -47,13 +56,18 @@ public class EmployeeServiceImpl implements EmployeeService {
                 String plainPassword = persistentEmployee.getPassword();
                 persistentEmployee.setPassword(encryptPassword(plainPassword));
                 logger.info("Employee signup success!");
-                return employeeRepository.save(persistentEmployee);
+                Employee employee =  employeeRepository.save(persistentEmployee);
+                signupResponse.setEmployeeId(employee.getEmployeeId());
+                signupResponse.setSignedUp(true);
+                signupResponse.setMessage(Constants.SIGNUP_SUCCESS_MESSAGE);
+
+                return signupResponse;
             }
         } catch (IOException | NoSuchAlgorithmException e) {
             logger.error(String.format("Employee signup failed with error: %s" , e.toString()));
         }
 
-       return null;
+       return new SignupResponse(Constants.FAILURE_EMPLOYEE_ID, false, Constants.SIGNUP_EMAIL_DUPLICATE_MESSAGE);
     }
 
     @Override

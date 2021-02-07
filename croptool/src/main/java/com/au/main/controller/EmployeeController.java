@@ -1,9 +1,6 @@
 package com.au.main.controller;
 
-
-import com.au.main.constants.Constants;
 import com.au.main.request.Credentials;
-import com.au.main.entity.Employee;
 import com.au.main.request.EmployeeSignUp;
 import com.au.main.response.LoginResponse;
 import com.au.main.response.SignupResponse;
@@ -26,11 +23,10 @@ public class EmployeeController {
 
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> employeeSignup(@Valid @RequestBody EmployeeSignUp employeeSignUp) throws IOException, NoSuchAlgorithmException{
-
-        Employee response = employeeService.addEmployee(employeeSignUp);
-        if(response != null)
-            return new ResponseEntity<>(new SignupResponse(response.getEmployeeId(), Boolean.TRUE, Constants.SIGNUP_SUCCESS_MESSAGE), HttpStatus.CREATED);
-        return new ResponseEntity<>(new SignupResponse(Constants.FAILURE_EMPLOYEE_ID, Boolean.FALSE, Constants.SIGNUP_EMAIL_DUPLICATE_MESSAGE), HttpStatus.CONFLICT);
+        SignupResponse response = employeeService.addEmployee(employeeSignUp);
+        if(response.isSignedUp())
+            return ResponseEntity.ok(response);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     @PostMapping("/login")

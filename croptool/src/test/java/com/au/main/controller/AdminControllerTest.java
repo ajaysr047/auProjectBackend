@@ -31,6 +31,7 @@ class AdminControllerTest {
         response.setSuccess(true);
         response.setMessage("Success Test!");
 
+
         Mockito.when(adminService.getAllData()).thenReturn(response);
         Assertions.assertTrue(Objects.requireNonNull(adminController.getAllEmployeeData().getBody()).isSuccess());
 

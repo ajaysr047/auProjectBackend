@@ -18,9 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -36,8 +34,9 @@ class EmployeeControllerTest {
     void employeeSignupTest() throws Exception{
 //        Successfully created
         Employee dummyEmployee = new Employee();
-
-        Mockito.when(employeeService.addEmployee(Mockito.any(EmployeeSignUp.class))).thenReturn(dummyEmployee);
+        SignupResponse signupResponse = new SignupResponse();
+        signupResponse.setSignedUp(true);
+        Mockito.when(employeeService.addEmployee(Mockito.any(EmployeeSignUp.class))).thenReturn(signupResponse);
 
         EmployeeSignUp employeeSignUp = new EmployeeSignUp();
         employeeSignUp.setEmployeeName("Test 1");
@@ -47,13 +46,13 @@ class EmployeeControllerTest {
 
         ResponseEntity<SignupResponse> successResponse = employeeController.employeeSignup(employeeSignUp);
 
-        Assertions.assertEquals(Boolean.TRUE, Objects.requireNonNull(successResponse.getBody()).getIsSignedUp());
+        Assertions.assertEquals(true, Objects.requireNonNull(successResponse.getBody()).isSignedUp());
 
 //        Employee signup failed
-        Mockito.when(employeeService.addEmployee(Mockito.any(EmployeeSignUp.class))).thenReturn(null);
+        signupResponse.setSignedUp(false);
         ResponseEntity<SignupResponse> nullResponse = employeeController.employeeSignup(employeeSignUp);
 
-        Assertions.assertEquals(Boolean.FALSE, Objects.requireNonNull(nullResponse.getBody()).getIsSignedUp());
+        Assertions.assertEquals(false, Objects.requireNonNull(nullResponse.getBody()).isSignedUp());
 
     }
 

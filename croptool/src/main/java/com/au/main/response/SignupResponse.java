@@ -8,7 +8,7 @@ import lombok.Setter;
 public class SignupResponse {
     private Integer employeeId;
 
-    private Boolean isSignedUp;
+    private boolean isSignedUp;
 
     private String message;
 

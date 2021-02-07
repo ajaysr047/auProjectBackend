@@ -9,7 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class BulkImageResponse {
-    private Boolean isSuccess;
+    private boolean isSuccess;
 
     private Set<ImageWrapper> responseEditedImages = new LinkedHashSet<>();
 

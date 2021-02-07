@@ -65,13 +65,13 @@ public class ImageServiceImpl implements ImageService {
                 response.getResponseEditedImages().add(responseEditedImage);
             }
             else{
-                response.setIsSuccess(Boolean.FALSE);
+                response.setSuccess(false);
                 response.setMessage(Constants.BULK_IMAGE_FAILURE_MESSAGE);
                 logger.warn("Bulk edit failed!");
                 return response;
             }
         }
-        response.setIsSuccess(Boolean.TRUE);
+        response.setSuccess(true);
         response.setMessage(Constants.BULK_IMAGE_SUCCESS_MESSAGE);
         logger.info("Bulk edit success!");
         return response;

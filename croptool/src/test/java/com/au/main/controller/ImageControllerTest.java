@@ -38,7 +38,7 @@ class ImageControllerTest {
     EmployeeService employeeService;
 
     @Test
-    void editImage() {
+    void editImageTest() {
         EditedImage editedImage = new EditedImage();
         editedImage.setEdited(true);
         ImageWrapper dummyImageWrapper = new ImageWrapper();
@@ -63,7 +63,7 @@ class ImageControllerTest {
     }
 
     @Test
-    void bulkEdit() {
+    void bulkEditTest() {
         LinkedHashSet<ImageWrapper> imageWrapperSet = new LinkedHashSet<>();
         ImageWrapper dummyImageWrapper = new ImageWrapper();
         dummyImageWrapper.setEmployeeId(1);
@@ -71,17 +71,17 @@ class ImageControllerTest {
         dummyBulkImageWrapper.setImageWrapperSet(imageWrapperSet);
 
         BulkImageResponse serviceResponse = new BulkImageResponse();
-        serviceResponse.setIsSuccess(Boolean.TRUE);
+        serviceResponse.setSuccess(true);
 //        Success
         Mockito.when(imageService.bulkEditSave(Mockito.any())).thenReturn(serviceResponse);
         ResponseEntity<BulkImageResponse> response = imageController.bulkEdit(dummyBulkImageWrapper);
-        Assertions.assertEquals(Boolean.TRUE, Objects.requireNonNull(response.getBody()).getIsSuccess());
+        Assertions.assertEquals(Boolean.TRUE, Objects.requireNonNull(response.getBody()).isSuccess());
 //        Failure
-        serviceResponse.setIsSuccess(Boolean.FALSE);
+        serviceResponse.setSuccess(false);
         Mockito.when(imageService.bulkEditSave(Mockito.any())).thenReturn(serviceResponse);
         response = imageController.bulkEdit(dummyBulkImageWrapper);
 
-        Assertions.assertEquals(Boolean.FALSE, Objects.requireNonNull(response.getBody()).getIsSuccess());
+        Assertions.assertEquals(Boolean.FALSE, Objects.requireNonNull(response.getBody()).isSuccess());
 
     }
 }
