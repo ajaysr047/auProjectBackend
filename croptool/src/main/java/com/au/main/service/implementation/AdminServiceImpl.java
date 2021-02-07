@@ -6,6 +6,8 @@ import com.au.main.repository.EmployeeRepository;
 import com.au.main.response.AdminAllEmployeeDataResponse;
 import com.au.main.response.AssignManagerResponse;
 import com.au.main.service.AdminService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.Optional;
 
 @Service
 public class AdminServiceImpl implements AdminService {
+
+    Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Autowired
     EmployeeRepository employeeRepository;
@@ -36,10 +40,12 @@ public class AdminServiceImpl implements AdminService {
             }
             response.setSuccess(true);
             response.setMessage(Constants.ADMIN_GET_ALL_DATA_SUCCESS_MESSAGE);
+            logger.info("Employee data for admin processed successfully!");
             return response;
         }
         response.setSuccess(false);
         response.setMessage(Constants.ADMIN_GET_ALL_DATA_FAILURE_MESSAGE);
+        logger.warn("Employee data processing for admin failed!");
         return response;
     }
 
@@ -53,10 +59,12 @@ public class AdminServiceImpl implements AdminService {
             employeeRepository.save(employee.get());
             response.setSuccess(true);
             response.setMessage(Constants.ASSIGN_MANAGER_SUCCESS_MESSAGE);
+            logger.info("Manager assigned successfully!");
             return response;
         }
         response.setSuccess(false);
         response.setMessage(Constants.ASSIGN_MANAGER_FAILURE_MESSAGE);
+        logger.warn("Assigning manager failed!");
         return response;
     }
 }
