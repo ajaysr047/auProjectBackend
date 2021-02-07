@@ -13,6 +13,8 @@ public class Constants {
 
     public static final Integer FAILURE_EMPLOYEE_ID = -1;
 
+    public static final String EMPTY_RESPONSE_STRING = "Nil";
+
     public static final int BOUND_FOR_DUMMY_IMAGES = 4;
 
     public static final int BOUND_OFFSET = 1;

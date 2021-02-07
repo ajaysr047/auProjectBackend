@@ -80,19 +80,21 @@ class EmployeeControllerTest {
     @Test
     void employeeLoginTest() {
         Credentials dummyCredentials = new Credentials();
-        Employee dummyResponseEmployee = new Employee();
+        LoginResponse response = new LoginResponse();
+        response.setValid(true);
 //        Successful Login
-        Mockito.when(employeeService.login(Mockito.any(Credentials.class))).thenReturn(dummyResponseEmployee);
+        Mockito.when(employeeService.login(Mockito.any(Credentials.class))).thenReturn(response);
 
         ResponseEntity<LoginResponse> successResponse = employeeController.employeeLogin(dummyCredentials);
 
-        Assertions.assertEquals(Boolean.TRUE, Objects.requireNonNull(successResponse.getBody()).getIsValid());
+        Assertions.assertTrue(Objects.requireNonNull(successResponse.getBody()).isValid());
 //        Login failure
-        Mockito.when(employeeService.login(Mockito.any(Credentials.class))).thenReturn(null);
+        response.setValid(false);
+        Mockito.when(employeeService.login(Mockito.any(Credentials.class))).thenReturn(response);
 
         ResponseEntity<LoginResponse> failureResponse = employeeController.employeeLogin(dummyCredentials);
 
-        Assertions.assertEquals(Boolean.FALSE, Objects.requireNonNull(failureResponse.getBody()).getIsValid());
+        Assertions.assertFalse(Objects.requireNonNull(failureResponse.getBody()).isValid());
     }
 
     @Test

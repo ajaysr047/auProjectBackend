@@ -35,11 +35,10 @@ public class EmployeeController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> employeeLogin(@Valid @RequestBody Credentials credentials){
-        Employee employee = employeeService.login(credentials);
-
-        if(employee != null)
-            return ResponseEntity.ok(new LoginResponse(employee.getEmployeeId(), Boolean.TRUE, employee.getRole(), Constants.LOGIN_SUCCESS_MESSAGE));
-        return new ResponseEntity<>(new LoginResponse(Constants.FAILURE_EMPLOYEE_ID, Boolean.FALSE, Constants.LOGIN_FAILED_ROLE, Constants.LOGIN_FAILED_MESSAGE), HttpStatus.BAD_REQUEST);
+        LoginResponse response = employeeService.login(credentials);
+        if(response.isValid())
+            return ResponseEntity.ok(response);
+        return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
     }
 
     @GetMapping("/getSubordinates/{managerId}")

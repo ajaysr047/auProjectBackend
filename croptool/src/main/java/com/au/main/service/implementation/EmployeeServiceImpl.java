@@ -7,12 +7,14 @@ import com.au.main.repository.EmployeeRepository;
 import com.au.main.request.EmployeeSignUp;
 import com.au.main.request.ImageWrapper;
 import com.au.main.response.EditedImage;
+import com.au.main.response.LoginResponse;
 import com.au.main.response.SubordinatesResponse;
 import com.au.main.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
@@ -55,14 +57,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee login(Credentials credentials) {
+    public LoginResponse login(Credentials credentials) {
         Optional<Employee> employee = employeeRepository.findByEmail(credentials.getEmail());
         if(employee.isPresent() && isPasswordValid(credentials.getPassword(), employee.get().getPassword())){
             logger.info("Logged in successfully");
-            return employee.get();
+            return new LoginResponse(employee.get().getEmployeeId(), true, employee.get().getRole(), Constants.LOGIN_SUCCESS_MESSAGE, employee.get().getEmployeeName(), employee.get().getEmail());
         }
         logger.warn("Login failed!");
-        return null;
+        return new LoginResponse(Constants.FAILURE_EMPLOYEE_ID, false, Constants.LOGIN_FAILED_ROLE, Constants.LOGIN_FAILED_MESSAGE, Constants.EMPTY_RESPONSE_STRING, Constants.EMPTY_RESPONSE_STRING);
     }
 
     @Override

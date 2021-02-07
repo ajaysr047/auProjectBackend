@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class LoginResponse {
 
-    private Boolean isValid;
+    private boolean isValid;
 
     private String role;
 
@@ -15,11 +15,17 @@ public class LoginResponse {
 
     private Integer employeeId;
 
-    public LoginResponse(Integer employeeId, Boolean isValid, String role, String message) {
+    private String employeeName;
+
+    private String email;
+
+    public LoginResponse(Integer employeeId, Boolean isValid, String role, String message, String employeeName, String email) {
         this.isValid = isValid;
         this.role = role;
         this.message = message;
         this.employeeId = employeeId;
+        this.employeeName =employeeName;
+        this.email =email;
     }
 
     public LoginResponse() {
