@@ -29,11 +29,13 @@ class AdminControllerTest {
     void getAllEmployeeData() {
         AdminAllEmployeeDataResponse response = new AdminAllEmployeeDataResponse();
         response.setSuccess(true);
+        response.setMessage("Success Test!");
 
         Mockito.when(adminService.getAllData()).thenReturn(response);
         Assertions.assertTrue(Objects.requireNonNull(adminController.getAllEmployeeData().getBody()).isSuccess());
 
         response.setSuccess(false);
+        response.setMessage("Failure Test!");
         Assertions.assertFalse(Objects.requireNonNull(adminController.getAllEmployeeData().getBody()).isSuccess());
     }
 
@@ -41,6 +43,7 @@ class AdminControllerTest {
     void assignManager() {
         AssignManagerResponse response = new AssignManagerResponse();
         response.setSuccess(true);
+        response.setMessage("Success Test!");
         AssignManager assignManager = new AssignManager();
         assignManager.setManagerId(1);
         assignManager.setEmployeeId(2);
@@ -49,6 +52,7 @@ class AdminControllerTest {
         Assertions.assertTrue(Objects.requireNonNull(adminController.assignManager(assignManager).getBody()).isSuccess());
 
         response.setSuccess(false);
+        response.setMessage("Failure Test!");
         Assertions.assertFalse(Objects.requireNonNull(adminController.assignManager(assignManager).getBody()).isSuccess());
     }
 }

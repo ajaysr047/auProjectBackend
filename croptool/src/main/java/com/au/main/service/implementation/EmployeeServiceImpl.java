@@ -5,6 +5,9 @@ import com.au.main.request.Credentials;
 import com.au.main.entity.Employee;
 import com.au.main.repository.EmployeeRepository;
 import com.au.main.request.EmployeeSignUp;
+import com.au.main.request.ImageWrapper;
+import com.au.main.response.EditedImage;
+import com.au.main.response.SubordinatesResponse;
 import com.au.main.service.EmployeeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -24,7 +26,7 @@ import java.util.Set;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
 
     @Autowired
@@ -64,17 +66,43 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee getEditedImage(Integer employeeId) {
-        Optional<Employee> employee = employeeRepository.findById(employeeId);
-        return employee.orElse(null);
+    public EditedImage getEditedImage(ImageWrapper imageWrapper) {
+        Optional<Employee> employee = employeeRepository.findById(imageWrapper.getEmployeeId());
+        EditedImage editedImage = new EditedImage();
+        if(employee.isPresent()){
+            editedImage.setEmployeeId(imageWrapper.getEmployeeId());
+            editedImage.setImageFileData(employee.get().getEditedImage());
+            editedImage.setEdited(true);
+            editedImage.setMessage(Constants.IMAGE_SAVED_MESSAGE);
+        }
+        else{
+            editedImage.setEdited(false);
+            editedImage.setMessage(Constants.INVALID_USER_MESSAGE);
+        }
+        return editedImage;
     }
 
     @Override
-    public Set<Employee> getSubordinates(Integer managerId) {
+    public SubordinatesResponse getSubordinates(Integer managerId) {
+
+        SubordinatesResponse subordinates = new SubordinatesResponse();
         Optional<Employee> manager = employeeRepository.findByRoleAndEmployeeId(Constants.MANAGER_ROLE, managerId);
-        if(manager.isPresent())
-            return manager.map(Employee::getSubordinateEmployees).orElse(null);
-        return new HashSet<>();
+        if(manager.isPresent()){
+            subordinates.setManagerId(managerId);
+            Set<Employee> responseList = manager.get().getSubordinateEmployees();
+            if(!responseList.isEmpty()){
+                subordinates.setSuccess(true);
+                subordinates.setMessage(Constants.SUBORDINATE_SUCCESS_MESSAGE);
+
+                responseList.forEach(employee -> subordinates.getSubordinateList().add(employee));
+                logger.info("Subordinates found!");
+                return subordinates;
+            }
+        }
+        subordinates.setSuccess(false);
+        subordinates.setMessage(Constants.SUBORDINATE_FAILURE_MESSAGE);
+        logger.warn("Subordinates not found!");
+        return subordinates;
     }
 
     private String encryptPassword(String plainPassword) {

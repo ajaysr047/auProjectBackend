@@ -12,7 +12,7 @@ import java.util.List;
 public class SubordinatesResponse {
     private Integer managerId;
 
-    private Boolean isSuccess;
+    private boolean isSuccess;
 
     private String message;
 

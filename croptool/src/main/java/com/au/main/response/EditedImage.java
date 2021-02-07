@@ -16,5 +16,5 @@ public class EditedImage {
 
     private String message;
 
-    private Boolean isEdited;
+    private boolean isEdited;
 }

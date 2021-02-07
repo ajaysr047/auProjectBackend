@@ -1,7 +1,6 @@
 package com.au.main.controller;
 
 import com.au.main.constants.Constants;
-import com.au.main.entity.Employee;
 import com.au.main.request.BulkImageWrapper;
 import com.au.main.request.ImageWrapper;
 import com.au.main.response.BulkImageResponse;
@@ -26,28 +25,15 @@ public class ImageController {
     EmployeeService employeeService;
 
     @PostMapping(value = "/editImage")
-    public ResponseEntity<Object> editImage(@Valid @RequestBody ImageWrapper imageWrapper){
+    public ResponseEntity<EditedImage> editImage(@Valid @RequestBody ImageWrapper imageWrapper){
 
         boolean isSaved = imageService.saveToDB(imageWrapper);
         EditedImage editedImage = new EditedImage();
         if(isSaved){
-            Employee employee = employeeService.getEditedImage(imageWrapper.getEmployeeId());
-
-
-            if(employee != null){
-                editedImage.setEmployeeId(imageWrapper.getEmployeeId());
-                editedImage.setImageFileData(employee.getEditedImage());
-                editedImage.setIsEdited(Boolean.TRUE);
-                editedImage.setMessage(Constants.IMAGE_SAVED_MESSAGE);
-                return new ResponseEntity<>(editedImage, HttpStatus.OK);
-            }
-            else{
-                editedImage.setIsEdited(Boolean.FALSE);
-                editedImage.setMessage(Constants.INVALID_USER_MESSAGE);
-                return new ResponseEntity<>(editedImage, HttpStatus.NOT_FOUND);
-            }
+            editedImage = employeeService.getEditedImage(imageWrapper);
+            return ResponseEntity.ok(editedImage);
         }
-        editedImage.setIsEdited(Boolean.FALSE);
+        editedImage.setEdited(false);
         editedImage.setMessage(Constants.IMAGE_EDIT_FAILED_MESSAGE);
         return new ResponseEntity<>(editedImage, HttpStatus.EXPECTATION_FAILED);
     }

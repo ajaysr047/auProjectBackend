@@ -5,6 +5,7 @@ import com.au.main.request.Credentials;
 import com.au.main.request.EmployeeSignUp;
 import com.au.main.response.LoginResponse;
 import com.au.main.response.SignupResponse;
+import com.au.main.response.SubordinatesResponse;
 import com.au.main.service.EmployeeService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -96,17 +97,17 @@ class EmployeeControllerTest {
 
     @Test
     void getSubordinatesTest() {
-        Set<Employee> dummySuccess = new HashSet<>();
-        dummySuccess.add(new Employee());
+        SubordinatesResponse response = new SubordinatesResponse();
+        response.setSuccess(true);
 //        Successful retrieval
-        Mockito.when(employeeService.getSubordinates(Mockito.any(Integer.class))).thenReturn(dummySuccess);
+        Mockito.when(employeeService.getSubordinates(Mockito.any(Integer.class))).thenReturn(response);
 
         ResponseEntity<Object> successResponse = employeeController.getSubordinates(1);
 
         Assertions.assertEquals(HttpStatus.OK, successResponse.getStatusCode());
 //        Retrieval failed
-        dummySuccess.clear();
-        Mockito.when(employeeService.getSubordinates(Mockito.any(Integer.class))).thenReturn(dummySuccess);
+        response.setSuccess(false);
+        Mockito.when(employeeService.getSubordinates(Mockito.any(Integer.class))).thenReturn(response);
 
         ResponseEntity<Object> failureResponse = employeeController.getSubordinates(1);
 

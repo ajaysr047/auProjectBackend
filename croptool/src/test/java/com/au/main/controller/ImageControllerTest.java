@@ -5,6 +5,7 @@ import com.au.main.entity.Image;
 import com.au.main.request.BulkImageWrapper;
 import com.au.main.request.ImageWrapper;
 import com.au.main.response.BulkImageResponse;
+import com.au.main.response.EditedImage;
 import com.au.main.service.EmployeeService;
 import com.au.main.service.ImageService;
 import org.junit.jupiter.api.Assertions;
@@ -38,23 +39,26 @@ class ImageControllerTest {
 
     @Test
     void editImage() {
-        Employee dummyEmployee = new Employee();
+        EditedImage editedImage = new EditedImage();
+        editedImage.setEdited(true);
         ImageWrapper dummyImageWrapper = new ImageWrapper();
         dummyImageWrapper.setEmployeeId(1);
+
 //        Success
         Mockito.when(imageService.saveToDB(Mockito.any(ImageWrapper.class))).thenReturn(Boolean.TRUE);
-        Mockito.when(employeeService.getEditedImage(1)).thenReturn(dummyEmployee);
-        ResponseEntity<Object> successResponse = imageController.editImage(dummyImageWrapper);
+        Mockito.when(employeeService.getEditedImage(dummyImageWrapper)).thenReturn(editedImage);
+        ResponseEntity<EditedImage> successResponse = imageController.editImage(dummyImageWrapper);
         Assertions.assertEquals(HttpStatus.OK, successResponse.getStatusCode());
 
 //        Employee Null
-        Mockito.when(employeeService.getEditedImage(1)).thenReturn(null);
-        ResponseEntity<Object> employeeNullResponse = imageController.editImage(dummyImageWrapper);
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, employeeNullResponse.getStatusCode());
+        editedImage.setEdited(false);
+        Mockito.when(employeeService.getEditedImage(dummyImageWrapper)).thenReturn(editedImage);
+        ResponseEntity<EditedImage> employeeNullResponse = imageController.editImage(dummyImageWrapper);
+        assertFalse(Objects.requireNonNull(employeeNullResponse.getBody()).isEdited());
 
 //        Failure
         Mockito.when(imageService.saveToDB(Mockito.any(ImageWrapper.class))).thenReturn(Boolean.FALSE);
-        ResponseEntity<Object> failureResponse = imageController.editImage(dummyImageWrapper);
+        ResponseEntity<EditedImage> failureResponse = imageController.editImage(dummyImageWrapper);
         Assertions.assertEquals(HttpStatus.EXPECTATION_FAILED, failureResponse.getStatusCode());
     }
 

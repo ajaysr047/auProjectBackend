@@ -9,8 +9,6 @@ import com.au.main.response.LoginResponse;
 import com.au.main.response.SignupResponse;
 import com.au.main.response.SubordinatesResponse;
 import com.au.main.service.EmployeeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/employee")
 public class EmployeeController {
-
-    private Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Autowired
     EmployeeService employeeService;
@@ -49,24 +44,10 @@ public class EmployeeController {
 
     @GetMapping("/getSubordinates/{managerId}")
     public ResponseEntity<Object> getSubordinates(@PathVariable("managerId") Integer managerId){
-        Set<Employee> responseList = employeeService.getSubordinates(managerId);
-        SubordinatesResponse subordinates = new SubordinatesResponse();
-        subordinates.setManagerId(managerId);
-        if(!responseList.isEmpty()){
-
-            subordinates.setIsSuccess(Boolean.TRUE);
-            subordinates.setMessage(Constants.SUBORDINATE_SUCCESS_MESSAGE);
-
-            responseList.forEach(employee -> subordinates.getSubordinateList().add(employee));
-            logger.info("Subordinates found!");
-            return ResponseEntity.ok(subordinates);
-        }
-
-        subordinates.setIsSuccess(Boolean.FALSE);
-        subordinates.setMessage(Constants.SUBORDINATE_FAILURE_MESSAGE);
-        logger.warn("Subordinates not found!");
-        return new ResponseEntity<>(subordinates, HttpStatus.NOT_FOUND);
+        SubordinatesResponse response = employeeService.getSubordinates(managerId);
+        if(response.isSuccess())
+            return ResponseEntity.ok(response);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
-
 
 }
